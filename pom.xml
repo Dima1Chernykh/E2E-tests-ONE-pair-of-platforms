@@ -9,6 +9,7 @@
 
     <properties>
         <aspectj.version>1.8.10</aspectj.version>
+        <java.version>11</java.version>
     </properties>
 
     <dependencies>
@@ -92,6 +93,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>RELEASE</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
         </dependency>
     </dependencies>
 

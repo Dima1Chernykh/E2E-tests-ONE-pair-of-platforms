@@ -1,5 +1,7 @@
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.offset.PointOption;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
@@ -9,37 +11,42 @@ import static java.time.Duration.ofMillis;
 public class GoToMainPageTest extends Methods {
 
     @Test
-    public void testAppIsOpen() {
+    public void testGoToMainPage() throws InterruptedException {
 
         System.out.println(this.getClass().getName() + " " + "started!");
 
-        StartPage1 startPage1 = new StartPage1(driver);
-        MainPage mainPage = new MainPage(driver);
+        WebDriverWait wait = new WebDriverWait(this.driver, 30);
+
+        StartPage startPage = new StartPage(driver);
+        CityPage cityPage = new CityPage(driver);
         SoftAssert softAssert = new SoftAssert();
 
-        softAssert.assertTrue(startPage1.firstMessage.isDisplayed(), "firstMessage is not displayed");
-        softAssert.assertTrue(startPage1.firstText.isDisplayed(), "firstText is not displayed");
+        softAssert.assertTrue(startPage.firstTextFirst.isDisplayed(), "firstTextFirst is not displayed");
+        softAssert.assertTrue(startPage.secondTextFirst.isDisplayed(), "secondTextFirst is not displayed");
+        softAssert.assertTrue(startPage.thirdTextFirst.isDisplayed(), "thirdTextFirst is not displayed");
 
-        tapElementAt(startPage1.page, 0.72,0.985);
-        softAssert.assertTrue(startPage1.secondMessage.isDisplayed(), "secondMessage is not displayed");
-        softAssert.assertTrue(startPage1.secondText.isDisplayed(), "secondText is not displayed");
+        startPage.nextButton.click();
+        Thread.sleep(1000);
+        softAssert.assertTrue(startPage.firstTextSecond.isDisplayed(), "firstTextFirst is not displayed");
+        softAssert.assertTrue(startPage.secondTextSecond.isDisplayed(), "secondTextFirst is not displayed");
+        softAssert.assertTrue(startPage.thirdTextSecond.isDisplayed(), "thirdTextFirst is not displayed");
 
-        new TouchAction(driver)
-                .press(PointOption.point((int)returnX(startPage1.page, 0.85), (int)returnY(startPage1.page, 0.3)))
-                .waitAction(waitOptions(ofMillis(800)))
-                .moveTo(PointOption.point((int)returnX(startPage1.page,0.15), (int)returnY(startPage1.page, 0.3)))
-                .release()
-                .perform();
-        softAssert.assertTrue(startPage1.thirdMessage.isDisplayed(), "thirdMessage is not displayed");
-        softAssert.assertTrue(startPage1.thirdText.isDisplayed(), "thirdText is not displayed");
+        startPage.nextButton.click();
+        Thread.sleep(1000);
+        softAssert.assertTrue(startPage.firstTextThird.isDisplayed(), "firstTextFirst is not displayed");
+        softAssert.assertTrue(startPage.secondTextThird.isDisplayed(), "secondTextFirst is not displayed");
+        softAssert.assertTrue(startPage.thirdTextThird.isDisplayed(), "thirdTextFirst is not displayed");
 
-        tapElementAt(startPage1.page, 0.72,0.985);
-        softAssert.assertTrue(startPage1.fourthMessage.isDisplayed(), "fourthMessage is not displayed");
-        softAssert.assertTrue(startPage1.fourthText.isDisplayed(), "fourthText is not displayed");
-        softAssert.assertTrue(startPage1.fourthStartButton.isDisplayed(), "fourthStartButton is not displayed");
+        startPage.nextButton.click();
+        Thread.sleep(1000);
+        softAssert.assertTrue(startPage.firstTextFourth.isDisplayed(), "firstTextFirst is not displayed");
+        softAssert.assertTrue(startPage.secondTextFourth.isDisplayed(), "secondTextFirst is not displayed");
+        softAssert.assertTrue(startPage.thirdTextFourth.isDisplayed(), "thirdTextFirst is not displayed");
 
-        startPage1.fourthStartButton.click();
-        softAssert.assertTrue(mainPage.mainButton.isDisplayed(), "mainButton is not displayed");
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.startButtonFourth)));
+        startPage.startButtonFourth.click();
+
+        softAssert.assertTrue(cityPage.cityHeader.isDisplayed(), "cityHeader is not displayed");
 
         softAssert.assertAll();
     }

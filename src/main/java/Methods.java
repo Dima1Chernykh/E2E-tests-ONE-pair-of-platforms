@@ -1,32 +1,39 @@
 import com.google.common.collect.ImmutableList;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.functions.ExpectedCondition;
+import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.asserts.SoftAssert;
 
 import java.time.Duration;
 import java.util.Random;
 
+import static io.appium.java_client.touch.WaitOptions.waitOptions;
 import static java.lang.Thread.sleep;
 import static java.time.Duration.ofMillis;
 
 
-public class Methods extends Controller {
+public class Methods extends BaseMethods {
 
-//    protected AppiumDriver<?> driver;
-//
-//    @BeforeMethod
-//    public void setUp() throws Exception {
-//        driver = BaseMethods.returnDriver(BaseMethods.readProperty("run.platform"));
-//    }
-//
-//    @AfterMethod
-//    public void tearDown() {
-//        driver.quit();
-//    }
+    protected AppiumDriver<?> driver;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+//        driver = BaseMethods.returnDriver(System.getenv("TESTING_PLATFORM"));
+        driver = BaseMethods.returnDriver(BaseMethods.readProperty("run.platform"));
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        driver.quit();
+    }
 
     // random string generation
     public static String generateRandomHexString (int length){
@@ -102,40 +109,57 @@ public class Methods extends Controller {
         return true;
     }
 
-//    protected void loginToDev() {
-//
-//        WebDriverWait wait = new WebDriverWait(this.driver, 30);
-//        StartPage1 startPage1 = new StartPage1(this.driver);
-//        PreLoginPage2 preLoginPage2 = new PreLoginPage2(this.driver);
-//        PhoneNumberPage3 phoneNumberPage3 = new PhoneNumberPage3(this.driver);
-//        PhoneCallingPage4 phoneCallingPage4 = new PhoneCallingPage4(this.driver);
-//        CarManagementPage carManagementPage = new CarManagementPage(this.driver);
-//
-//        wait.until(ExpectedConditions.elementToBeClickable((startPage1.submitBegin)));
-//        startPage1.submitBegin.click();
-//        wait.until(ExpectedConditions.elementToBeClickable((preLoginPage2.loginButton)));
-//        preLoginPage2.loginButton.click();
-//
-//        phoneNumberPage3.phoneNumberInput.isDisplayed();
-//        phoneNumberPage3.phoneNumberInput.sendKeys(phone);
-//
-//        phoneNumberPage3.consentCheckbox.click();
-//        phoneNumberPage3.consentCheckbox.click();
-//        wait.until(ExpectedConditions.elementToBeClickable((phoneNumberPage3.continueButton)));
-//        phoneNumberPage3.continueButton.click();
-//
-//        phoneCallingPage4.bottomSheet.isDisplayed();
-//        // DEV button click
-//        tapElementAt(phoneCallingPage4.bottomSheet, 0.5, 0.85);
-//
-//        wait.until(ExpectedConditions.elementToBeClickable((phoneCallingPage4.yesCalledButton)));
-//        phoneCallingPage4.yesCalledButton.click();
-//
-//        wait.until(ExpectedConditions.elementToBeClickable((phoneCallingPage4.confirmCodeInput)));
-//        phoneCallingPage4.confirmCodeInput.sendKeys(confirmCodeDEV);
-//
-//        wait.until(ExpectedConditions.elementToBeClickable((carManagementPage.carManagementHeader)));
-//        Assert.assertTrue(carManagementPage.carManagementHeader.isDisplayed(), "Login is not completed");
-//    }
+    protected void skipStartCarousel() throws InterruptedException {
+
+        WebDriverWait wait = new WebDriverWait(this.driver, 30);
+        StartPage startPage = new StartPage(this.driver);
+        CityPage cityPage = new CityPage(this.driver);
+        MainPage mainPage = new MainPage(this.driver);
+        SoftAssert softAssert = new SoftAssert();
+
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.nextButton)));
+
+        startPage.nextButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.firstTextSecond)));
+
+        startPage.nextButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.firstTextThird)));
+
+        startPage.nextButton.click();
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.firstTextFourth)));
+
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.startButtonFourth)));
+        startPage.startButtonFourth.click();
+
+        softAssert.assertTrue(cityPage.cityHeader.isDisplayed(), "cityHeader is not displayed");
+        cityPage.firstCity.click();
+        softAssert.assertTrue(mainPage.mainButton.isDisplayed(), "mainButton is not displayed");
+        softAssert.assertAll();
+    }
+
+    protected void loginToDev() throws InterruptedException {
+
+        WebDriverWait wait = new WebDriverWait(this.driver, 30);
+        StartPage startPage = new StartPage(this.driver);
+        MainPage mainPage = new MainPage(this.driver);
+        LoginPopUpPage loginPopUpPage = new LoginPopUpPage(this.driver);
+        MyAutoPage myAutoPage = new MyAutoPage(this.driver);
+        SoftAssert softAssert = new SoftAssert();
+
+        wait.until(ExpectedConditions.elementToBeClickable((startPage.nextButton)));
+
+        skipStartCarousel();
+
+        mainPage.hyundaiIDButton.click();
+        loginPopUpPage.phoneInput.sendKeys(phone);
+        loginPopUpPage.checkbox.click();
+        loginPopUpPage.continueButton.click();
+        loginPopUpPage.devButton.click();
+        Thread.sleep(1000);
+        loginPopUpPage.devButton.click();
+        loginPopUpPage.devCodeInput.sendKeys(confirmCodeDEV);
+        softAssert.assertTrue(myAutoPage.myAutoText.isDisplayed(), "myAutoText is not displayed");
+        softAssert.assertAll();
+    }
 
 }
